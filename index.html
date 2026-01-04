@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>遊戲戰略研究室 (純淨無標點版)</title>
+    <title>遊戲戰略研究室 (純淨版)</title>
     <style>
         /* ================= 核心設定 ================= */
         :root {
@@ -55,7 +55,7 @@
 
         /* ================= SUBNAUTICA 圖例與地圖 ================= */
         
-        /* 圖例容器：作為翻譯對照表 */
+        /* 圖例容器 */
         .legend-container {
             background: #23272a;
             border: 2px solid #444;
@@ -73,7 +73,6 @@
             align-items: center;
             font-size: 0.95em;
             line-height: 1.4;
-            cursor: default; /* 純展示，無互動游標 */
         }
 
         /* 圖示樣式 (圓凸質感) */
@@ -88,24 +87,18 @@
             border: 1px solid rgba(0,0,0,0.5);
         }
 
-        /* 顏色定義 */
-        .i-small-wreck { background-color: #00ffff; }
-        .i-large-wreck { background-color: #cc0000; }
-        .i-pod { background-color: #0080ff; }
-        .i-base-aband { background-color: #800080; }
-        .i-base-pre { background-color: #b0c4de; }
+        /* 顏色定義 (依照您上傳的圖片) */
+        .i-small-wreck { background-color: #00ffff; }   /* 小型殘骸 (青) */
+        .i-large-wreck { background-color: #cc0000; }   /* 大型殘骸 (紅) */
+        .i-pod { background-color: #0080ff; }           /* 逃生艙 (藍) */
+        .i-base-aband { background-color: #800080; }    /* 德加斯 (紫) */
+        .i-base-pre { background-color: #b0c4de; }      /* 外星遺跡 (灰藍) */
         
-        .i-cave-jelly { background-color: #da70d6; }
-        .i-cave-island { background-color: #008080; }
-        .i-cave-blood { background-color: #0000ff; }
-        .i-cave-reef { background-color: #556b2f; }
-        .i-cave-other { background-color: #8b4513; }
+        .i-ent-lost { background-color: #00b050; }      /* 失落之河 (綠) */
+        .i-ent-inactive { background-color: #ff6600; }  /* 死火山 (橘) */
+        .i-ent-active { background-color: #8b0000; }    /* 活火山 (暗紅) */
         
-        .i-ent-lost { background-color: #00b050; }
-        .i-ent-inactive { background-color: #ff6600; }
-        .i-ent-active { background-color: #8b0000; }
-        
-        .i-therm { background-color: #ffff00; }
+        .i-therm { background-color: #ffff00; }         /* 熱噴口 (黃) */
 
         /* 特殊形狀 */
         .i-island { 
@@ -244,17 +237,13 @@
             <div class="legend-item"><span class="icon i-island"></span>浮島 / 山脈島 (Islands)</div>
             <div class="legend-item"><span class="icon i-rad"></span>輻射區 (Radiation zone)</div>
             
-            <div class="legend-item"><span class="icon i-cave-jelly"></span>蛇蘑菇洞 (Jelly Shroom Caves)</div>
-            <div class="legend-item"><span class="icon i-cave-island"></span>水下浮島洞穴 (Underwater Island Caves)</div>
-            <div class="legend-item"><span class="icon i-cave-blood"></span>血油區洞穴 (Blood Kelp Caves)</div>
-            <div class="legend-item"><span class="icon i-cave-reef"></span>深大暗礁 (Deep Grand Reef)</div>
             <div class="legend-item"><span class="icon i-therm"></span>熱能噴口 (Thermal Vents)</div>
         </div>
 
         <div class="map-wrapper" id="mapWrapper">
             <div id="mapContent" class="map-content">
-                <img src="map.png" id="mapImg" class="map-img" alt="Subnautica Map">
-                </div>
+                <img src="Subnautica_map2.webp" id="mapImg" class="map-img" alt="Subnautica Map">
+            </div>
         </div>
         <div class="map-controls">👇 提示：使用滑鼠滾輪縮放圖片，按住左鍵拖曳檢視細節</div>
 
@@ -327,7 +316,7 @@
         }
     }
 
-    // --- Subnautica 純圖片瀏覽器 (無預設標點) ---
+    // --- Subnautica 純圖片瀏覽器 (無互動標記) ---
     const mapContent = document.getElementById('mapContent');
     const mapImg = document.getElementById('mapImg');
     const wrapper = document.getElementById('mapWrapper');
@@ -340,7 +329,7 @@
         }
         if (panzoomInstance) panzoomInstance.destroy();
 
-        // 僅保留圖片縮放功能 (無 staticMapData)
+        // 僅保留圖片縮放功能
         const scaleW = wrapper.offsetWidth / mapImg.naturalWidth;
         const scaleH = wrapper.offsetHeight / mapImg.naturalHeight;
         const minScale = Math.max(scaleW, scaleH) * 1.0;
@@ -357,5 +346,4 @@
     });
 </script>
 </body>
-
 </html>
