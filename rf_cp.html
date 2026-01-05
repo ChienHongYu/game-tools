@@ -13,15 +13,22 @@
         }
         
         html, body {
-            margin: 0; padding: 5px; 
-            padding-bottom: 20px;
+            margin: 0; padding: 0; 
             font-family: 'Noto Sans TC', sans-serif; 
             background: transparent; 
             color: var(--text-main);
+            /* 防止 iframe 內部出現捲軸 */
+            overflow: hidden; 
+        }
+        * { box-sizing: border-box; }
+
+        /* 內容容器，用來精準計算高度 */
+        #content-wrapper {
+            padding: 10px;
+            width: 100%;
             height: auto;
             overflow: hidden;
         }
-        * { box-sizing: border-box; }
 
         .tech-card {
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
@@ -57,37 +64,13 @@
             cursor: pointer;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-        select:hover {
+        select:hover, input:hover {
             border-color: rgba(212, 167, 106, 0.6);
-            background: linear-gradient(135deg, #1a1f26 0%, #0f1419 100%);
         }
         select:focus, input:focus {
             border-color: var(--accent-gold);
             outline: none;
             box-shadow: 0 0 0 3px rgba(212, 167, 106, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        input:hover {
-            border-color: rgba(212, 167, 106, 0.6);
-        }
-        select option {
-            background: #1a1f26;
-            color: var(--text-main);
-            padding: 10px;
-            font-weight: 500;
-        }
-        select option:checked {
-            background: linear-gradient(90deg, rgba(212, 167, 106, 0.3), rgba(212, 167, 106, 0.1));
-            color: var(--accent-gold);
-        }
-        /* 隱藏數字輸入框的加減按鈕 */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-            appearance: textfield;
         }
         .action-btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-gold { background: var(--accent-gold); color: #1a1815; font-size: 1.1em; }
@@ -100,27 +83,13 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #333;
-            /* 自訂滾動條樣式 */
             scrollbar-width: thin;
             scrollbar-color: var(--accent-gold) #1a1a1a;
         }
-        /* 表格容器滾動條樣式 */
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .table-container::-webkit-scrollbar-track {
-            background: #1a1a1a;
-            border-radius: 0 0 8px 8px;
-        }
-        .table-container::-webkit-scrollbar-thumb {
-            background: var(--accent-gold);
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #e5b87a;
-            box-shadow: 0 0 6px rgba(212, 167, 106, 0.4);
-        }
+        .table-container::-webkit-scrollbar { height: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #1a1a1a; }
+        .table-container::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 4px; }
+        
         table { width: 100%; border-collapse: collapse; min-width: 500px; }
         th { background: #2c241b; color: var(--accent-gold); padding: 15px; text-align: left; }
         td { padding: 12px 15px; border-bottom: 1px solid #222; color: #ccc; font-family: monospace; }
@@ -135,7 +104,7 @@
             <div class="grid-row">
                 <div class="grid-col"><label>裝備階級</label><select id="rf-tier"><option value="t1">T1 究極</option><option value="t2">T2 究極</option><option value="t3">T3 究極</option><option value="t4">T4 究極</option><option value="t5">T5 究極</option></select></div>
                 <div class="grid-col"><label>強化等級</label><select id="rf-level"><option value="0-5">Lv 0-5</option><option value="6">Lv 6</option><option value="7">Lv 7</option><option value="8">Lv 8</option><option value="9">Lv 9</option><option value="10">Lv 10</option><option value="12">Lv 12</option></select></div>
-                <div class="grid-col"><label>投入鑽石</label><input type="number" id="rf-diamonds" placeholder="輸入鑽石數量" min="1" value=""></div>
+                <div class="grid-col"><label>投入鑽石</label><input type="number" id="rf-diamonds" placeholder="輸入鑽石數量" min="1"></div>
             </div>
             <button class="action-btn btn-gold" onclick="calcRF()">開始計算</button>
             <div id="rf-result" class="result-box" style="display:none;"></div>
@@ -166,46 +135,53 @@
         function calcRF() {
             const lv=document.getElementById('rf-level').value, t=document.getElementById('rf-tier').value;
             let d = parseInt(document.getElementById('rf-diamonds').value);
-
-            // 確保有輸入數字且大於 0
-            if (!d || d < 1) {
-                alert('請輸入有效的鑽石數量');
-                return;
-            }
+            if (!d || d < 1) { alert('請輸入有效的鑽石數量'); return; }
 
             const res=parseFloat((rfCpData[lv][t]/d).toFixed(3));
             const box=document.getElementById('rf-result');
-            box.innerText=`每 1 鑽石可換取：${res} 節點`; box.style.display='block';
+            box.innerText=`每 1 鑽石可換取：${res} 節點`; 
+            box.style.display='block';
+            // 計算後會觸發內容變化，ResizeObserver 會自動處理高度
         }
 
-        // === 關鍵：由內而外控制高度 ===
+        // --- 修正後的高度調整邏輯 ---
+        let lastHeight = 0;
+        const wrapper = document.getElementById('content-wrapper');
+
         function resizeParent() {
-            const height = document.documentElement.scrollHeight;
-            if(window.frameElement) {
-                window.frameElement.style.height = height + 'px';
+            // 使用 offsetHeight 量測內容容器
+            const currentHeight = wrapper.offsetHeight; 
+            
+            // 只有當高度變化超過 2px 時才通知父層，避免無限循環
+            if (Math.abs(currentHeight - lastHeight) > 2) {
+                if(window.frameElement) {
+                    window.frameElement.style.height = currentHeight + 'px';
+                    lastHeight = currentHeight;
+                }
             }
         }
+
+        // 監聽內容尺寸變化 (最穩定方案)
+        if (window.ResizeObserver) {
+            const ro = new ResizeObserver(() => {
+                resizeParent();
+            });
+            ro.observe(wrapper);
+        }
+
         window.addEventListener('load', resizeParent);
         window.addEventListener('resize', resizeParent);
-        const observer = new MutationObserver(resizeParent);
-        observer.observe(document.body, { attributes: true, childList: true, subtree: true });
-        setInterval(resizeParent, 200);
 
-        // 讓表格容器支援滾輪橫向滑動
-        document.addEventListener('DOMContentLoaded', function() {
-            const tableContainer = document.querySelector('.table-container');
-            if (tableContainer) {
-                tableContainer.addEventListener('wheel', function(e) {
-                    // 如果有橫向滾動空間，攔截垂直滾輪事件並轉為橫向滾動
-                    if (this.scrollWidth > this.clientWidth) {
-                        e.preventDefault();
-                        this.scrollLeft += e.deltaY;
-                    }
-                }, { passive: false });
-            }
-        });
+        // 表格橫向滾動優化
+        const tableContainer = document.querySelector('.table-container');
+        if (tableContainer) {
+            tableContainer.addEventListener('wheel', function(e) {
+                if (this.scrollWidth > this.clientWidth) {
+                    e.preventDefault();
+                    this.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+        }
     </script>
 </body>
-
 </html>
-
