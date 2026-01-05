@@ -180,10 +180,10 @@
 
         // === 關鍵：由內而外控制高度 ===
         function resizeParent() {
-            const height = document.documentElement.scrollHeight;
-            if(window.frameElement) {
-                window.frameElement.style.height = (height + 50) + 'px';
-            }
+            // const height = document.documentElement.scrollHeight;
+            // if(window.frameElement) {
+            //     window.frameElement.style.height = (height + 50) + 'px';
+            // }
         }
         window.addEventListener('load', resizeParent);
         window.addEventListener('resize', resizeParent);
@@ -206,4 +206,5 @@
         });
     </script>
 </body>
+
 </html>
