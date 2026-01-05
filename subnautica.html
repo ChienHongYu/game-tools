@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnautica 戰略地圖 (中英對照版)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 核心設定 ================= */
+        :root {
+            --bg-deep: #0b0e11;
+            --bg-panel: #15191d;
+            --text-main: #e6e6e6;
+            --accent: #00bcd4;
+            --border: #333;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Rajdhani', 'Noto Sans TC', sans-serif; 
+            background-color: var(--bg-deep); 
+            background-image: radial-gradient(circle at 50% 0%, #1c252e 0%, var(--bg-deep) 80%);
+            color: var(--text-main); 
+            margin: 0; padding: 20px; 
+            min-height: 100vh;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        /* 導航標題區 - 加入了按鈕樣式 */
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 15px; border-bottom: 1px solid var(--border);
+        }
+        
+        .header-title { text-align: right; }
+        h1 { margin: 0; font-size: 1.5em; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+        .subtitle { color: #888; font-size: 0.9em; }
+
+        /* 新增：返回首頁按鈕樣式 */
+        .nav-btn {
+            text-decoration: none;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1em;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 188, 212, 0.05);
+        }
+        .nav-btn:hover {
+            background: rgba(0, 188, 212, 0.2);
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+            color: #fff;
+            transform: translateX(5px); /* 微微向右滑動效果 */
+        }
+
+        /* ================= 1. 圖例區 (完整 20 項中英對照) ================= */
+        .legend-bar {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;
+            padding: 15px; font-size: 0.85em;
+            display: flex; flex-wrap: wrap; gap: 10px 20px; justify-content: flex-start;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .l-item { 
+            display: flex; align-items: center; gap: 8px; color: #ccc; cursor: default; 
+            white-space: nowrap; 
+        }
+        .l-item:hover { color: #fff; }
+        
+        /* 圖示樣式 */
+        .dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+        .line { width: 15px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+        
+        /* --- 顏色定義 --- */
+        .c-pre { background: #888; }          /* 極光號前 */
+        .c-post { background: #cc0000; }      /* 極光號後 */
+        .c-rad { background: repeating-linear-gradient(45deg, #444, #444 2px, #ffd700 2px, #ffd700 4px); border: 1px solid #ffd700; width:12px; height:12px; border-radius:50%; }
+        .c-float { width: 12px; height: 12px; border: 2px solid #32cd32; background: transparent; border-radius: 3px; }
+        .c-mount { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #2e8b57; }
+        .c-poi { background: #000; border: 1px solid #fff; }  /* 興趣點 */
+        .c-jelly { background: #da70d6; }     /* 蛇蘑菇 */
+        .c-under { background: #008080; }     /* 水下浮島洞穴 */
+        .c-blood { background: #0000ff; }     /* 血油洞穴 */
+        .c-deep { background: #556b2f; }      /* 深暗礁 */
+        .c-wreck-s { background: #00ffff; }   /* 小殘骸 */
+        .c-wreck-l { background: #ff0000; }   /* 大殘骸 */
+        .c-pod { background: #0080ff; }       /* 逃生艙 */
+        .c-base { background: #800080; }      /* 德加斯 */
+        .c-alien { background: #b0c4de; }     /* 外星遺跡 */
+        .c-lost { background: #00ff00; }      /* 失落河 */
+        .c-lava-in { background: #ff4500; }   /* 死火山 */
+        .c-lava-ac { background: #800000; }   /* 活火山 */
+        .c-other { background: #8b4513; }     /* 其他洞穴 */
+        .c-therm { background: #ffff00; }     /* 熱能 */
+
+        /* ================= 2. 地圖區 ================= */
+        .map-frame { 
+            width: 100%; 
+            height: 75vh;       
+            min-height: 600px;  
+            background: #050505; border: 1px solid var(--border); border-radius: 8px; 
+            overflow: hidden; position: relative; cursor: grab;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .map-frame:active { cursor: grabbing; }
+        .map-content { transform-origin: 0 0; width: fit-content; }
+        .map-img { display: block; max-width: none; pointer-events: none; user-select: none; }
+        .map-hint { 
+            position: absolute; bottom: 10px; left: 10px; 
+            background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 4px;
+            color: #aaa; font-size: 0.8em; pointer-events: none;
+        }
+
+        /* ================= 3. 生物群落色卡 ================= */
+        .biome-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            padding: 15px;
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;
+        }
+
+        .biome-card {
+            padding: 10px; text-align: center;
+            border-radius: 4px; border: 1px solid rgba(0,0,0,0.1);
+            color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-weight: bold; font-size: 0.95em;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        
+        .biome-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1; border-color: rgba(255,255,255,0.5);
+        }
+
+        .biome-en { font-size: 0.75em; opacity: 0.8; font-weight: normal; margin-top: 2px; text-transform: uppercase; }
+
+        /* 背景色定義 */
+        .r-safe { background: #a8bba3; color: #000; text-shadow:none; }
+        .r-kelp { background: #c8e6c9; color: #000; text-shadow:none; }
+        .r-red { background: #e6a8a8; color: #000; text-shadow:none; }
+        .r-under { background: #cba896; color: #000; text-shadow:none; }
+        .r-sparse { background: #b4cfa8; color: #000; text-shadow:none; }
+        .r-float { background: #32cd32; }
+        .r-treader { background: #9abed6; color: #000; text-shadow:none; }
+        .r-grand { background: #8daec4; color: #000; text-shadow:none; }
+        .r-blood { background: #aeb6d6; color: #000; text-shadow:none; }
+        .r-mush { background: #9fa8da; color: #000; text-shadow:none; }
+        .r-bulb { background: #bcaaa4; color: #000; text-shadow:none; }
+        .r-crash { background: #b0a396; color: #000; text-shadow:none; }
+        .r-mount-isle { background: #607d8b; }
+        .r-mount { background: #78909c; }
+        .r-dunes { background: #ffe0b2; color: #000; text-shadow:none; }
+        .r-crag { background: #558b2f; }
+        .r-lost { background: #b2dfdb; color: #000; text-shadow:none; }
+        .r-lava-in { background: #d7ccc8; color: #000; text-shadow:none; }
+        .r-lava-ac { background: #ffccbc; color: #000; text-shadow:none; }
+        .r-jelly { background: #e1bee7; color: #000; text-shadow:none; }
+
+        /* 手機版調整 */
+        @media (max-width: 600px) {
+            header { flex-direction: column-reverse; gap: 15px; }
+            .header-title { text-align: center; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+    <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="nav-btn">
+        <span>⌂</span> RETURN HOME
+    </a>
+
+    <div class="header-title">
+        <h1>Subnautica Map</h1>
+        <span class="subtitle">戰略地圖與群落對照</span>
+    </div>
+</header>
+
+<div class="legend-bar">
+    <div class="l-item"><span class="line c-pre"></span>極光號 (爆炸前) Aurora (Pre)</div>
+    <div class="l-item"><span class="dot c-poi"></span>興趣點 (Points of interest)</div>
+    <div class="l-item"><span class="line c-post"></span>極光號 (爆炸後) Aurora (Post)</div>
+    <div class="l-item"><span class="dot c-jelly"></span>蛇蘑菇洞入口 (Jelly Shroom)</div>
+    <div class="l-item"><span class="c-rad"></span>輻射區 (Radiation)</div>
+    <div class="l-item"><span class="dot c-under"></span>水下浮島洞穴 (Underwater Is.)</div>
+    <div class="l-item"><span class="c-float"></span>漂浮島 (Floater Island)</div>
+    <div class="l-item"><span class="dot c-blood"></span>血油區洞穴入口 (Blood Kelp)</div>
+    <div class="l-item"><span class="c-mount"></span>五指山 (Mountain Island)</div>
+    <div class="l-item"><span class="dot c-deep"></span>深大暗礁入口 (Deep Grand Reef)</div>
+    <div class="l-item"><span class="dot c-wreck-s"></span>小型殘骸 (Small wrecks)</div>
+    <div class="l-item"><span class="dot c-lava-in"></span>死火山入口 (Inactive Lava)</div>
+    <div class="l-item"><span class="dot c-wreck-l"></span>大型殘骸 (Large wrecks)</div>
+    <div class="l-item"><span class="dot c-lost"></span>失落之河入口 (Lost River)</div>
+    <div class="l-item"><span class="dot c-pod"></span>逃生艙 (Escape pods)</div>
+    <div class="l-item"><span class="dot c-other"></span>其他洞穴入口 (Other caves)</div>
+    <div class="l-item"><span class="dot c-base"></span>德加斯基地 (Abandoned bases)</div>
+    <div class="l-item"><span class="dot c-therm"></span>熱能/岩漿噴口 (Vents)</div>
+    <div class="l-item"><span class="dot c-alien"></span>外星遺跡 (Precursor bases)</div>
+    <div class="l-item"><span class="dot c-lava-ac"></span>活火山入口 (Active Lava)</div>
+</div>
+
+<div class="map-frame" id="mapWrapper">
+    <div id="mapContent" class="map-content">
+        <img src="Subnautica_map2.webp" id="mapImg" class="map-img" alt="Subnautica Map">
+    </div>
+    <div class="map-hint">SCROLL TO ZOOM • DRAG TO PAN</div>
+</div>
+
+<div class="biome-grid">
+    <div class="biome-card r-safe">安全淺灘<div class="biome-en">Safe Shallows</div></div>
+    <div class="biome-card r-kelp">海藻森林<div class="biome-en">Kelp Forest</div></div>
+    <div class="biome-card r-red">紅草區 (草原)<div class="biome-en">Grassy Plateaus</div></div>
+    <div class="biome-card r-under">水下浮島<div class="biome-en">Underwater Islands</div></div>
+    <div class="biome-card r-sparse">稀疏暗礁<div class="biome-en">Sparse Reef</div></div>
+    <div class="biome-card r-float">漂浮島 (陸地)<div class="biome-en">Floater Island</div></div>
+    <div class="biome-card r-treader">踏浪者之路<div class="biome-en">Sea Treader's Path</div></div>
+    <div class="biome-card r-grand">大暗礁<div class="biome-en">Grand Reef</div></div>
+    <div class="biome-card r-blood">血油區<div class="biome-en">Blood Kelp</div></div>
+    <div class="biome-card r-mush">蘑菇森林<div class="biome-en">Mushroom Forest</div></div>
+    <div class="biome-card r-bulb">庫什區<div class="biome-en">Bulb Zone</div></div>
+    <div class="biome-card r-crash">墜毀區<div class="biome-en">Crash Zone</div></div>
+    <div class="biome-card r-mount-isle">五指山 (山脈島)<div class="biome-en">Mountain Island</div></div>
+    <div class="biome-card r-mount">山脈區<div class="biome-en">Mountains</div></div>
+    <div class="biome-card r-dunes">沙丘區<div class="biome-en">Dunes</div></div>
+    <div class="biome-card r-crag">碎骨區<div class="biome-en">Crag Field</div></div>
+    <div class="biome-card r-lost">失落之河<div class="biome-en">Lost River</div></div>
+    <div class="biome-card r-lava-in">死火山區<div class="biome-en">Inactive Lava</div></div>
+    <div class="biome-card r-lava-ac">活火山區<div class="biome-en">Active Lava</div></div>
+    <div class="biome-card r-jelly">蛇蘑菇洞<div class="biome-en">Jellyshroom Cave</div></div>
+</div>
+
+<script>
+    // --- 完整的地圖初始化邏輯 ---
+    const mapContent = document.getElementById('mapContent');
+    const mapImg = document.getElementById('mapImg');
+    const wrapper = document.getElementById('mapWrapper');
+    let panzoomInstance = null;
+
+    function initMapViewer() {
+        // 確保圖片已經載入
+        if (!mapImg.complete || mapImg.naturalWidth === 0) {
+            setTimeout(initMapViewer, 100); 
+            return;
+        }
+        
+        // 如果舊實例存在，先銷毀
+        if (panzoomInstance) panzoomInstance.destroy();
+        
+        // 計算縮放比例：讓圖片能「包含」在視窗內
+        const scaleW = wrapper.offsetWidth / mapImg.naturalWidth;
+        const scaleH = wrapper.offsetHeight / mapImg.naturalHeight;
+        
+        // 取較大值，讓地圖一開始就盡量填滿畫面
+        const startScale = Math.max(scaleW, scaleH);
+
+        panzoomInstance = Panzoom(mapContent, {
+            maxScale: 10,               
+            minScale: startScale * 0.5, 
+            startScale: startScale,     
+            contain: 'outside',         
+            cursor: 'grab'
+        });
+        
+        // 綁定滾輪事件
+        wrapper.addEventListener('wheel', panzoomInstance.zoomWithWheel);
+    }
+
+    // 頁面載入完成後執行
+    window.addEventListener('load', () => {
+        setTimeout(initMapViewer, 200);
+        // 視窗大小改變時重新計算
+        window.addEventListener('resize', () => setTimeout(initMapViewer, 100));
+    });
+</script>
+</body>
+</html>

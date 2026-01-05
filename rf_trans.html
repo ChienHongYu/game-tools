@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text-main: #c5c6c7;
+            --text-highlight: #66fcf1;
+            --accent-gold: #d4a76a;
+            --accent-glow: rgba(212, 167, 106, 0.4);
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --bg-card: rgba(31, 40, 51, 0.95);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* === 關鍵設定 === */
+        html, body {
+            margin: 0; 
+            padding: 5px; 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background: transparent; 
+            color: var(--text-main);
+            height: auto;
+            overflow: hidden;
+        }
+        * { box-sizing: border-box; }
+
+        .tech-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 30px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative; overflow: hidden;
+        }
+        .tech-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent); opacity: 0.7;
+        }
+        .card-title {
+            font-size: 1.4em; color: var(--accent-gold); border-left: 4px solid var(--accent-gold);
+            padding-left: 15px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;
+        }
+        .grid-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .grid-col { flex: 1; }
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 0.9em; font-family: 'Rajdhani'; letter-spacing: 1px; }
+        select, input {
+            width: 100%; padding: 14px; background: #0b0c10; border: 1px solid #333;
+            color: #fff; border-radius: 6px; font-size: 1em; transition: 0.3s;
+        }
+        select:focus, input:focus { border-color: var(--accent-gold); outline: none; }
+        .action-btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1em; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .btn-outline { background: rgba(102, 252, 241, 0.05); color: var(--text-highlight); border: 1px solid var(--text-highlight); }
+        .btn-outline:hover { background: var(--text-highlight); color: #000; }
+        .btn-danger { background: rgba(231, 76, 60, 0.1); color: var(--danger); border: 1px solid var(--danger); margin-top: 15px; }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+        .trans-list {
+            background: #0b0c10; border: 1px solid #333; border-radius: 8px;
+            padding: 10px; min-height: 120px; max-height: 300px; overflow-y: auto; margin-top: 20px;
+        }
+        .list-item { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #222; font-family: monospace; }
+        .score-val { color: var(--success); font-weight: bold; }
+        .total-box { text-align: right; margin-top: 15px; font-size: 1.3em; font-weight: bold; color: #fff; font-family: 'Rajdhani'; }
+        .total-box span { color: var(--accent-gold); margin-left: 10px; }
+        .result-box {
+            margin-top: 20px; padding: 20px; background: #1a1a1a; border-radius: 8px;
+            text-align: center; border: 1px dashed #444; color: #666; transition: 0.3s;
+        }
+        .result-box.active {
+            background: rgba(46, 204, 113, 0.1); border: 1px solid var(--success); color: var(--success);
+            font-weight: bold; box-shadow: 0 0 15px rgba(46, 204, 113, 0.1);
+        }
+        @media (max-width: 700px) { .grid-row { flex-direction: column; gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="tech-card">
+        <div class="card-title">物質變換 (頭飾) 計算機</div>
+        <div class="grid-row">
+            <div class="grid-col">
+                <label>裝備階級 (ITEM TIER)</label>
+                <select id="trans-item">
+                    <option value="b1">藍 T1 (稀有)</option><option value="b2">藍 T2 (稀有)</option>
+                    <option value="b3">藍 T3 (稀有)</option><option value="b4">藍 T4 (稀有)</option>
+                    <option value="b5">藍 T5 (稀有)</option><option value="b6">藍 T6 (稀有)</option>
+                    <option value="p1">紫 T1 (英雄)</option><option value="p2">紫 T2 (英雄)</option>
+                    <option value="p3">紫 T3 (英雄)</option>
+                </select>
+            </div>
+            <div class="grid-col">
+                <label>強化狀態 (ENHANCEMENT)</label>
+                <select id="trans-grade">
+                    <option value="0">安定值內 (一般)</option><option value="1">過2以內 (一般)</option>
+                    <option value="2">過3-4 (一般)</option><option value="3">安定值內 (究極)</option>
+                    <option value="4">過2以內 (究極)</option><option value="5">過3-4 (究極)</option>
+                </select>
+            </div>
+        </div>
+        <button class="action-btn btn-outline" onclick="addTransItem()">+ 加入排程 (ADD ITEM)</button>
+        <div class="trans-list" id="trans-list"><div style="text-align:center; padding:40px; color:#444;">NO DATA INPUT</div></div>
+        <div class="total-box">TOTAL SCORE: <span id="trans-score">0</span></div>
+        <div id="trans-result" class="result-box">⚠ 警告：數量不足 4 件，無法執行轉換</div>
+        <button class="action-btn btn-danger" onclick="resetTrans()">清除重置 (RESET)</button>
+    </div>
+
+    <script>
+        const transData = { b1: {name: "藍 T1", scores: [10, 11, 12, 15, 17, 18]}, b2: {name: "藍 T2", scores: [30, 33, 36, 45, 50, 54]}, b3: {name: "藍 T3", scores: [50, 55, 60, 75, 83, 90]}, b4: {name: "藍 T4", scores: [75, 83, 90, 113, 125, 135]}, b5: {name: "藍 T5", scores: [100, 110, 165, 150, 165, 248]}, b6: {name: "藍 T6", scores: [150, 165, 180, 225, 248, 270]}, p1: {name: "紫 T1", scores: [400, 440, 480, 600, 660, 720]}, p2: {name: "紫 T2", scores: [700, 770, 840, 1050, 1155, 1260]}, p3: {name: "紫 T3", scores: [1200, 1320, 1440, 1800, 1980, 2160]} };
+        const transGradeNames = ["安定(普)", "過2(普)", "過3-4(普)", "安定(究)", "過2(究)", "過3-4(究)"];
+        const stages = [{score: 4400, n: "第13階：紫 T5"}, {score: 2700, n: "第12階：紫 T4"}, {score: 1700, n: "第11階：紫 T3"}, {score: 1100, n: "第10階：紫 T2"}, {score: 800, n: "第9階：紫 T1"}, {score: 600, n: "第8階：藍 T7"}, {score: 400, n: "第7階：藍 T6"}, {score: 300, n: "第6階：藍 T5"}, {score: 200, n: "第5階：藍 T4"}, {score: 150, n: "第4階：藍 T3"}, {score: 100, n: "第3階：藍 T2"}, {score: 70, n: "第2階：藍 T1"}, {score: 0, n: "積分不足"}];
+        let tList = [];
+        function addTransItem() { const k = document.getElementById('trans-item').value; const g = parseInt(document.getElementById('trans-grade').value); tList.push({ name: transData[k].name, grade: transGradeNames[g], score: transData[k].scores[g] }); render(); }
+        function render() { const el = document.getElementById('trans-list'); if(tList.length===0){ el.innerHTML='<div style="text-align:center;padding:40px;color:#444;">NO DATA INPUT</div>'; document.getElementById('trans-score').innerText=0; return; } let h='', tot=0; tList.forEach((i,x)=>{ h+=`<div class="list-item"><span>[${x+1}] ${i.name} - ${i.grade}</span><span class="score-val">+${i.score}</span></div>`; tot+=i.score; }); el.innerHTML=h; document.getElementById('trans-score').innerText=tot; const res = document.getElementById('trans-result'); if(tList.length<4){ res.innerText=`累積分數：${tot} (還差 ${4-tList.length} 件)`; res.className="result-box"; } else { const m=stages.find(s=>tot>=s.score); res.innerText=m?`✅ 預測：${m.n}`:"積分不足"; res.className="result-box active"; } }
+        function resetTrans(){ tList=[]; render(); }
+    </script>
+</body>
+</html>

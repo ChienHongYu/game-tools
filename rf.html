@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RF Online Next 戰略中心</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0b0c10;
+            --bg-panel: #1f2833;
+            --text-main: #c5c6c7;
+            --accent-gold: #d4a76a;
+            --accent-glow: rgba(212, 167, 106, 0.4);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Noto Sans TC', 'Rajdhani', sans-serif; 
+            background-color: var(--bg-deep); 
+            background-image: radial-gradient(circle at 50% 0%, #2c241b 0%, var(--bg-deep) 80%);
+            color: var(--text-main); margin: 0; padding: 20px; 
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            overflow-y: scroll; /* 確保主視窗卷軸存在 */
+        }
+        .container { max-width: 1400px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex-grow: 1; }
+
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 30px;
+        }
+        h1 { 
+            font-family: 'Rajdhani', sans-serif; margin: 0; font-size: 2em; letter-spacing: 3px; 
+            color: var(--accent-gold); text-shadow: 0 0 15px var(--accent-glow);
+        }
+        .nav-btn {
+            text-decoration: none; color: var(--accent-gold); border: 1px solid var(--accent-gold);
+            padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 0.9em;
+            transition: 0.3s; display: flex; align-items: center; gap: 8px; background: rgba(212, 167, 106, 0.05);
+        }
+        .nav-btn:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+
+        .layout-main { display: flex; gap: 30px; align-items: flex-start; flex-grow: 1; }
+        
+        .sidebar {
+            width: 260px; flex-shrink: 0; background: var(--bg-panel); border-radius: 12px; padding: 20px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
+            position: sticky; top: 20px; z-index: 10;
+        }
+        .menu-title { font-size: 0.8em; color: #666; margin-bottom: 5px; padding-left: 10px; font-weight: bold; }
+        .menu-btn {
+            text-align: left; padding: 15px; background: transparent; color: #aaa; border: none; border-radius: 8px; 
+            cursor: pointer; transition: 0.3s; font-size: 1em; font-weight: bold;
+        }
+        .menu-btn:hover { background: rgba(255,255,255,0.05); color: #fff; padding-left: 18px; }
+        .menu-btn.active { 
+            background: linear-gradient(90deg, rgba(212, 167, 106, 0.2), transparent); 
+            color: var(--accent-gold); border-left: 4px solid var(--accent-gold);
+        }
+
+        .content-area { 
+            flex-grow: 1; display: flex; flex-direction: column; width: 100%; min-height: 500px;
+        }
+        
+        /* 核心修改：隱藏 Iframe 卷軸 */
+        iframe {
+            width: 100%; border: none; border-radius: 12px;
+            opacity: 0; transition: opacity 0.3s;
+            display: block; overflow: hidden; /* 隱藏 Iframe 捲軸 */
+        }
+
+        @media (max-width: 900px) {
+            .layout-main { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; position: static; }
+            .menu-title { display: none; } .menu-btn { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div><h1>RF Online Next</h1><div style="color:#888; font-size:0.9em; letter-spacing:1px;">TACTICAL RESOURCE CENTER</div></div>
+            <a href="index.html" class="nav-btn"><span>⌂</span> RETURN HOME</a>
+        </header>
+
+        <div class="layout-main">
+            <div class="sidebar">
+                <div class="menu-title">SYSTEM TOOLS</div>
+                <button class="menu-btn active" onclick="loadFrame('rf_trans.html', this)">⚖️ 物質變換計算</button>
+                <button class="menu-btn" onclick="loadFrame('rf_cp.html', this)">💎 鑽石 CP / 節點表</button>
+            </div>
+
+            <div class="content-area">
+                <iframe id="main-frame" src="rf_trans.html" scrolling="no"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('main-frame');
+        let resizeObserver = null;
+
+        function loadFrame(url, btn) {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            iframe.style.opacity = 0;
+            if(resizeObserver) resizeObserver.disconnect();
+
+            setTimeout(() => { iframe.src = url; }, 200);
+        }
+
+        iframe.onload = function() {
+            try {
+                iframe.style.opacity = 1;
+                const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const innerBody = innerDoc.body;
+                const innerHtml = innerDoc.documentElement;
+
+                // 核心邏輯：監聽內部大小變化，自動調整 Iframe 高度
+                resizeObserver = new ResizeObserver(() => {
+                    const newHeight = Math.max(
+                        innerBody.scrollHeight, 
+                        innerBody.offsetHeight, 
+                        innerHtml.scrollHeight,
+                        innerHtml.offsetHeight
+                    );
+                    iframe.style.height = (newHeight + 50) + 'px';
+                });
+                
+                // 開始監聽 body
+                resizeObserver.observe(innerBody);
+
+            } catch (e) {
+                console.error("Resize error:", e);
+                iframe.style.height = "800px"; // 失敗時的備用高度
+            }
+        };
+    </script>
+</body>
+</html>
