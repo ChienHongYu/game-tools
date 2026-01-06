@@ -25,6 +25,12 @@
             min-height: 100%;
             overflow: visible;
         }
+
+        /* 優化捲軸樣式 */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        body::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 4px; }
+        
         * { box-sizing: border-box; }
 
         .tech-card {
