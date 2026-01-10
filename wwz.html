@@ -1,1 +1,137 @@
-    
+    <!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWZ 戰略資料庫 | Game Strategy Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --accent-red: #8b0000;
+            --accent-glow: #ff4444;
+            --text-gray: #b0b0b0;
+            --tier1-color: #5d5d5d;
+            --tier2-color: #3498db;
+            --tier3-color: #e67e22;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0; padding: 0;
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1533134486753-c833f0ed4866?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        /* 標題與導覽 */
+        .header-box { border-left: 5px solid var(--accent-red); padding-left: 20px; margin-bottom: 40px; }
+        h1 { font-family: 'Oswald', sans-serif; font-size: 3rem; margin: 0; letter-spacing: 3px; }
+        .back-btn { color: var(--text-gray); text-decoration: none; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; transition: 0.3s; }
+        .back-btn:hover { color: #fff; }
+
+        /* 分類按鈕 */
+        .tab-container { display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        .tab-btn { background: #222; border: none; color: #888; padding: 10px 25px; cursor: pointer; font-weight: bold; transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); }
+        .tab-btn.active { background: var(--accent-red); color: #fff; box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* 武器表格樣式 */
+        .weapon-section { display: none; animation: fadeIn 0.5s ease; }
+        .weapon-section.active { display: block; }
+        
+        table { width: 100%; border-collapse: collapse; background: rgba(20, 20, 20, 0.9); margin-bottom: 40px; border: 1px solid #333; }
+        th { background: #111; color: var(--text-gray); text-align: left; padding: 15px; border-bottom: 2px solid var(--accent-red); text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #222; }
+        
+        .tier-label { font-weight: bold; font-family: 'Oswald'; padding: 2px 8px; border-radius: 3px; font-size: 0.8rem; }
+        .t1 { background: var(--tier1-color); }
+        .t2 { background: var(--tier2-color); }
+        .t3 { background: var(--tier3-color); }
+        .t-heavy { background: #c0392b; }
+
+        /* 職業卡片佈局 */
+        .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .class-card { background: rgba(30, 30, 30, 0.8); border: 1px solid #333; padding: 20px; border-radius: 5px; transition: 0.3s; }
+        .class-card:hover { border-color: var(--accent-red); transform: scale(1.02); }
+        .class-card h3 { color: var(--accent-glow); margin-top: 0; font-family: 'Oswald'; }
+        .class-card p { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-btn">← 返回研究室首頁</a>
+    <div class="header-box">
+        <h1>WORLD WAR Z: STRATEGY</h1>
+        <p style="color: var(--text-gray);">末日之戰：最新職業與全武器數據庫 (2026 Version)</p>
+    </div>
+
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="showTab('weapons')">武器清單庫</button>
+        <button class="tab-btn" onclick="showTab('classes')">八大職業體系</button>
+    </div>
+
+    <div id="weapons" class="weapon-section active">
+        <h2 style="color: var(--tier3-color);">等級三 (Tier 3) - 頂級武裝</h2>
+        <table>
+            <thead><tr><th width="100">等級</th><th>武器名稱</th><th>特性說明</th></tr></thead>
+            <tbody>
+                <tr><td><span class="tier-label t3">Tier 3</span></td><td>突擊卡賓槍 / 戰鬥步槍 / 無托式步槍</td><td>極致火力輸出，中遠程首選</td></tr>
+                <tr><td><span class="tier-label t3">Tier 3</span></td><td>先進戰鬥武器 (ACR) / 通用無托式步槍</td><td>全方位戰鬥性能，穩定性極佳</td></tr>
+                <tr><td><span class="tier-label t3">Tier 3</span></td><td>先進衝鋒槍 / 特殊衝鋒槍</td><td>射速之王，近距離清場效率極高</td></tr>
+                <tr><td><span class="tier-label t3">Tier 3</span></td><td>突擊霰彈槍 / 多槍管霰彈槍</td><td>金字塔收割神器，必備近戰清群</td></tr>
+                <tr><td><span class="tier-label t3">Tier 3</span></td><td>連發步槍 / 重型手槍 (DE50)</td><td>高穿透力，點殺特殊殭屍神槍</td></tr>
+                <tr><td><span class="tier-label t3">Tier 3</span></td><td>十字弩 / 榴彈發射器</td><td>大面積爆炸性傷害</td></tr>
+            </tbody>
+        </table>
+
+        <h2 style="color: var(--tier2-color);">等級二 (Tier 2) - 中堅戰力</h2>
+        <table>
+            <tbody>
+                <tr><td width="100"><span class="tier-label t2">Tier 2</span></td><td>突擊步槍 / 運動卡賓槍 / 經典戰鬥步槍</td><td>穩定的戰線維持武器</td></tr>
+                <tr><td><span class="tier-label t2">Tier 2</span></td><td>戰鬥霰彈槍 / 緊湊型霰彈槍</td><td>中期近距離防線主力</td></tr>
+                <tr><td><span class="tier-label t2">Tier 2</span></td><td>衝鋒槍 / 防禦衝鋒槍 / 個人防衛武器</td><td>高機動性輔助武裝</td></tr>
+            </tbody>
+        </table>
+
+        <h2 style="color: #c0392b;">重型武器 (Heavy) - 消耗性資產</h2>
+        <table>
+            <tbody>
+                <tr><td width="100"><span class="tier-label t-heavy">HEAVY</span></td><td>機槍 / 重型突擊霰彈槍 / 爆破步槍</td><td>突圍與高壓時刻的保命彈幕</td></tr>
+                <tr><td><span class="tier-label t-heavy">HEAVY</span></td><td>MGL / RPG / 多管火箭發射器</td><td>瞬間摧毀殭屍金字塔的唯一解</td></tr>
+                <tr><td><span class="tier-label t-heavy">HEAVY</span></td><td>鏈鋸 / 火焰噴射器</td><td>近戰守點與特殊路徑封鎖</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="classes" class="weapon-section">
+        <div class="class-grid">
+            <div class="class-card"><h3>槍手 Gunslinger</h3><p>自動武器專家，爆頭能回彈藥，追求純粹的射擊精準度。</p></div>
+            <div class="class-card"><h3>叛逆者 Hellraiser</h3><p>爆破大師，強化 C4 與榴彈傷害，大範圍清理的代名詞。</p></div>
+            <div class="class-card"><h3>醫生 Medic</h3><p>核心生存位，能遠程打針提供護盾與隱身，維持團隊血線。</p></div>
+            <div class="class-card"><h3>修補匠 Fixer</h3><p>戰術支援，提供爆炸彈藥箱或遮蔽煙霧，是高難度生存的關鍵。</p></div>
+            <div class="class-card"><h3>劈砍者 Slasher</h3><p>近戰控制，使用電擊槍定身特殊殭屍，近戰揮砍體力上限極高。</p></div>
+            <div class="class-card"><h3>殲滅者 Exterminator</h3><p>防禦與灼燒專家，燃燒彈清理金字塔效率極高，殺敵後可隱身。</p></div>
+            <div class="class-card"><h3>無人機大師 Dronemaster</h3><p>科技防禦，派遣無人機進行自動電擊或消音防護。</p></div>
+            <div class="class-card"><h3>前鋒 Vanguard</h3><p>前線坦克，配備護盾可正面格擋傷害並衝鋒突破重圍。</p></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.weapon-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
