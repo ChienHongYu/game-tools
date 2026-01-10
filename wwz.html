@@ -1,135 +1,313 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WWZ 戰略資料庫 | Game Strategy Lab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <title>WWZ TACTICAL HUD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Orbitron:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0a0a;
-            --accent-red: #8b0000;
-            --accent-glow: #ff4444;
-            --text-gray: #b0b0b0;
-            --tier1-color: #5d5d5d;
-            --tier2-color: #3498db;
-            --tier3-color: #e67e22;
+            --neon-blue: #00f3ff; --neon-gold: #ffd700; --neon-red: #ff2a2a;
+            --neon-white: #e0e0e0; --neon-green: #00ff9d;
+            --bg-dark: #050b14; --glass-bg: rgba(10, 20, 30, 0.75); --border-color: rgba(0, 243, 255, 0.3);
         }
-
         body {
-            background-color: var(--bg-dark);
-            color: #fff;
-            font-family: 'Noto Sans TC', sans-serif;
-            margin: 0; padding: 0;
-            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1533134486753-c833f0ed4866?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-attachment: fixed;
-            background-size: cover;
+            background-color: var(--bg-dark); color: #fff; font-family: 'Noto Sans TC', sans-serif;
+            margin: 0; padding: 0; overflow-x: hidden;
+            background-image: linear-gradient(rgba(5, 11, 20, 0.9), rgba(5, 11, 20, 0.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070');
+            background-size: cover; background-attachment: fixed; min-height: 100vh;
         }
-
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
-
-        /* 標題與導覽 */
-        .header-box { border-left: 5px solid var(--accent-red); padding-left: 20px; margin-bottom: 40px; }
-        h1 { font-family: 'Oswald', sans-serif; font-size: 3rem; margin: 0; letter-spacing: 3px; }
-        .back-btn { color: var(--text-gray); text-decoration: none; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; transition: 0.3s; }
-        .back-btn:hover { color: #fff; }
-
-        /* 分類按鈕 */
-        .tab-container { display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
-        .tab-btn { background: #222; border: none; color: #888; padding: 10px 25px; cursor: pointer; font-weight: bold; transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); }
-        .tab-btn.active { background: var(--accent-red); color: #fff; box-shadow: 0 0 15px var(--accent-glow); }
-
-        /* 武器表格樣式 */
-        .weapon-section { display: none; animation: fadeIn 0.5s ease; }
-        .weapon-section.active { display: block; }
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(0,243,255,0.03) 1px, transparent 1px), linear-gradient(rgba(0,243,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1; pointer-events: none;
+        }
+        .container { max-width: 1250px; margin: 0 auto; padding: 20px 20px; position: relative; }
         
-        table { width: 100%; border-collapse: collapse; background: rgba(20, 20, 20, 0.9); margin-bottom: 40px; border: 1px solid #333; }
-        th { background: #111; color: var(--text-gray); text-align: left; padding: 15px; border-bottom: 2px solid var(--accent-red); text-transform: uppercase; }
-        td { padding: 15px; border-bottom: 1px solid #222; }
+        /* 按鈕與導航 */
+        .home-btn { display: inline-flex; align-items: center; text-decoration: none; color: var(--neon-blue); font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 1rem; padding: 8px 16px; border: 1px solid var(--border-color); background: rgba(0, 243, 255, 0.1); margin-bottom: 20px; transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%); }
+        .home-btn:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 15px rgba(0, 243, 255, 0.5); }
+        .home-btn span { font-family: 'Orbitron'; font-size: 0.8rem; margin-left: 8px; opacity: 0.8; }
+
+        header { text-align: center; margin-bottom: 50px; position: relative; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; }
+        header::after { content: ""; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 200px; height: 4px; background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
+        h1 { font-family: 'Noto Sans TC', sans-serif; font-weight: 900; font-size: 3.5rem; margin: 0; background: linear-gradient(to bottom, #fff, #999); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255,255,255,0.3); letter-spacing: 2px; }
+        h1 small { font-family: 'Black Ops One', cursive; font-size: 0.4em; display: block; margin-top: 5px; letter-spacing: 5px; opacity: 0.8; }
+        .subtitle { font-family: 'Noto Sans TC', sans-serif; color: var(--neon-blue); font-weight: bold; letter-spacing: 3px; font-size: 1.1rem; margin-top: 10px; }
+        .subtitle span { font-family: 'Orbitron'; font-size: 0.9em; margin-left: 5px; }
+
+        .nav-box { display: flex; justify-content: center; gap: 20px; margin-bottom: 50px; }
+        .tab-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--neon-blue); padding: 15px 40px; font-family: 'Noto Sans TC', sans-serif; font-size: 1.3rem; font-weight: 700; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; clip-path: polygon(15% 0, 100% 0, 85% 100%, 0% 100%); }
+        .tab-btn span { display: block; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; margin-top: 4px; opacity: 0.7; }
+        .tab-btn:hover, .tab-btn.active { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); text-shadow: none; }
+
+        .section-content { display: none; animation: hudFadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section-content.active { display: block; }
+        @keyframes hudFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* 卡片與列表樣式 */
+        .tier-bar { display: flex; align-items: center; padding: 10px 20px; margin: 40px 0 20px 0; background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent); border-left: 5px solid #fff; }
+        .tier-bar h2 { margin: 0; font-family: 'Noto Sans TC', sans-serif; font-size: 2rem; font-weight: 900; text-shadow: 0 0 10px currentColor; }
+        .tier-bar h2 span { font-family: 'Orbitron', sans-serif; font-size: 0.6em; margin-left: 10px; opacity: 0.8; vertical-align: middle; }
+        .tier-desc { margin-left: 20px; color: #bbb; font-size: 1.1rem; font-family: 'Noto Sans TC'; font-weight: 500; letter-spacing: 1px; }
+        .tier-desc span { font-family: 'Orbitron'; font-size: 0.8em; color: #777; margin-left: 5px; text-transform: uppercase; }
+
+        .grid-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .card, .class-card { cursor: pointer; background: var(--glass-bg); border: 1px solid rgba(255,255,255,0.1); padding: 20px; position: relative; transition: all 0.3s ease; backdrop-filter: blur(5px); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%); }
+        .card:hover, .class-card:hover { transform: translateY(-5px) scale(1.02); z-index: 10; }
+        .card-name-cn { font-size: 1.4rem; font-weight: 700; display: block; margin-bottom: 5px; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .card-name-en { font-size: 0.8rem; font-family: 'Orbitron', sans-serif; color: rgba(255,255,255,0.6); display: block; letter-spacing: 1px; }
+
+        /* Tiers Colors */
+        .t1-style .tier-bar { border-color: var(--neon-white); } .t1-style h2 { color: var(--neon-white); }
+        .t1-style .card { border-top: 3px solid var(--neon-white); } .t1-style .card:hover { box-shadow: 0 0 15px rgba(255,255,255,0.3); border-color: var(--neon-white); }
         
-        .tier-label { font-weight: bold; font-family: 'Oswald'; padding: 2px 8px; border-radius: 3px; font-size: 0.8rem; }
-        .t1 { background: var(--tier1-color); }
-        .t2 { background: var(--tier2-color); }
-        .t3 { background: var(--tier3-color); }
-        .t-heavy { background: #c0392b; }
+        .t2-style .tier-bar { border-color: var(--neon-blue); } .t2-style h2 { color: var(--neon-blue); }
+        .t2-style .card { border-top: 3px solid var(--neon-blue); } .t2-style .card:hover { box-shadow: 0 0 20px rgba(0,243,255,0.4); border-color: var(--neon-blue); }
+        .t2-style .card-name-cn { color: var(--neon-blue); }
 
-        /* 職業卡片佈局 */
-        .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        .class-card { background: rgba(30, 30, 30, 0.8); border: 1px solid #333; padding: 20px; border-radius: 5px; transition: 0.3s; }
-        .class-card:hover { border-color: var(--accent-red); transform: scale(1.02); }
-        .class-card h3 { color: var(--accent-glow); margin-top: 0; font-family: 'Oswald'; }
-        .class-card p { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+        .t3-style .tier-bar { border-color: var(--neon-gold); } .t3-style h2 { color: var(--neon-gold); }
+        .t3-style .card { border-top: 3px solid var(--neon-gold); } .t3-style .card:hover { box-shadow: 0 0 25px rgba(255,215,0,0.5); border-color: var(--neon-gold); }
+        .t3-style .card-name-cn { color: var(--neon-gold); }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .heavy-style .tier-bar { border-color: var(--neon-red); } .heavy-style h2 { color: var(--neon-red); }
+        .heavy-style .card { border: 1px solid var(--neon-red); background: repeating-linear-gradient(45deg, rgba(255,0,0,0.05), rgba(255,0,0,0.05) 10px, rgba(0,0,0,0.2) 10px, rgba(0,0,0,0.2) 20px); }
+        .heavy-style .card:hover { box-shadow: 0 0 30px var(--neon-red); }
+        .heavy-style .card-name-cn { color: var(--neon-red); }
+
+        .melee-style .tier-bar { border-color: var(--neon-green); } .melee-style h2 { color: var(--neon-green); }
+        .melee-style .card { border-top: 3px solid var(--neon-green); } .melee-style .card:hover { box-shadow: 0 0 15px var(--neon-green); border-color: var(--neon-green); }
+        .melee-style .card-name-cn { color: var(--neon-green); }
+
+        .class-card { background: rgba(20,20,20,0.8); border: 1px solid #333; padding: 25px; position: relative; transition: 0.3s;}
+        .class-card::before { content: ''; position: absolute; top:0; left:0; width: 4px; height: 100%; background: var(--neon-blue); }
+        .class-card:hover { border-color: var(--neon-blue); box-shadow: inset 0 0 20px rgba(0,243,255,0.1); transform: translateY(-5px);}
+        .class-card h3 { color: #fff; margin: 0 0 10px 0; font-size: 1.5rem; }
+        .class-card span { font-size: 0.9rem; color: var(--neon-blue); font-family: 'Orbitron'; margin-left: 10px; }
+        .class-card p { color: #aaa; line-height: 1.6; font-size: 1rem; margin: 0; pointer-events: none;}
+
+        /* --- 彈出視窗 (Modal) 與 內部內容樣式 --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 1000; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-box {
+            width: 90%; max-width: 700px;
+            background: #0a0f18; border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.15);
+            position: relative; transform: scale(0.9); transition: transform 0.3s;
+            clip-path: polygon(5% 0, 100% 0, 100% 95%, 95% 100%, 0 100%, 0 5%);
+            display: flex; flex-direction: column; max-height: 80vh;
+        }
+        .modal-overlay.open .modal-box { transform: scale(1); }
+        
+        .modal-header {
+            background: linear-gradient(90deg, rgba(0,243,255,0.1), transparent);
+            padding: 20px 30px; border-bottom: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+        }
+        .modal-title-cn { font-size: 2rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 10px var(--neon-blue); }
+        .modal-title-en { font-family: 'Orbitron'; color: var(--neon-blue); font-size: 1rem; margin-top: 5px; letter-spacing: 2px;}
+        .modal-close-btn { background: transparent; border: none; color: #666; font-size: 2rem; cursor: pointer; transition: 0.2s; }
+        .modal-close-btn:hover { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+
+        .modal-content { padding: 30px; overflow-y: auto; }
+        
+        .info-section { margin-bottom: 25px; }
+        .info-label { 
+            color: var(--neon-gold); font-family: 'Orbitron'; font-size: 0.9rem; letter-spacing: 1px; 
+            margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; display: block;
+        }
+        .info-text { font-size: 1.1rem; line-height: 1.6; color: #ddd; }
+
+        /* 專精/流派列表 */
+        .build-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+        .build-item { 
+            background: rgba(255,255,255,0.05); border-left: 3px solid #555; padding: 15px; transition: 0.2s; 
+        }
+        .build-item:hover { background: rgba(255,255,255,0.1); border-left-color: var(--neon-blue); }
+        .build-name { color: #fff; font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px; }
+        .build-desc { color: #aaa; font-size: 0.95rem; }
+
+        @media (max-width: 768px) { .nav-box { flex-direction: column; width: 100%; } .modal-box { width: 95%; max-height: 90vh;} }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <a href="index.html" class="back-btn">← 返回研究室首頁</a>
-    <div class="header-box">
-        <h1>WORLD WAR Z: STRATEGY</h1>
-        <p style="color: var(--text-gray);">末日之戰：最新職業與全武器數據庫 (2026 Version)</p>
-    </div>
-
-    <div class="tab-container">
-        <button class="tab-btn active" onclick="showTab('weapons')">武器清單庫</button>
-        <button class="tab-btn" onclick="showTab('classes')">八大職業體系</button>
-    </div>
-
-    <div id="weapons" class="weapon-section active">
-        <h2 style="color: var(--tier3-color);">等級三 (Tier 3) - 頂級武裝</h2>
-        <table>
-            <thead><tr><th width="100">等級</th><th>武器名稱</th><th>特性說明</th></tr></thead>
-            <tbody>
-                <tr><td><span class="tier-label t3">Tier 3</span></td><td>突擊卡賓槍 / 戰鬥步槍 / 無托式步槍</td><td>極致火力輸出，中遠程首選</td></tr>
-                <tr><td><span class="tier-label t3">Tier 3</span></td><td>先進戰鬥武器 (ACR) / 通用無托式步槍</td><td>全方位戰鬥性能，穩定性極佳</td></tr>
-                <tr><td><span class="tier-label t3">Tier 3</span></td><td>先進衝鋒槍 / 特殊衝鋒槍</td><td>射速之王，近距離清場效率極高</td></tr>
-                <tr><td><span class="tier-label t3">Tier 3</span></td><td>突擊霰彈槍 / 多槍管霰彈槍</td><td>金字塔收割神器，必備近戰清群</td></tr>
-                <tr><td><span class="tier-label t3">Tier 3</span></td><td>連發步槍 / 重型手槍 (DE50)</td><td>高穿透力，點殺特殊殭屍神槍</td></tr>
-                <tr><td><span class="tier-label t3">Tier 3</span></td><td>十字弩 / 榴彈發射器</td><td>大面積爆炸性傷害</td></tr>
-            </tbody>
-        </table>
-
-        <h2 style="color: var(--tier2-color);">等級二 (Tier 2) - 中堅戰力</h2>
-        <table>
-            <tbody>
-                <tr><td width="100"><span class="tier-label t2">Tier 2</span></td><td>突擊步槍 / 運動卡賓槍 / 經典戰鬥步槍</td><td>穩定的戰線維持武器</td></tr>
-                <tr><td><span class="tier-label t2">Tier 2</span></td><td>戰鬥霰彈槍 / 緊湊型霰彈槍</td><td>中期近距離防線主力</td></tr>
-                <tr><td><span class="tier-label t2">Tier 2</span></td><td>衝鋒槍 / 防禦衝鋒槍 / 個人防衛武器</td><td>高機動性輔助武裝</td></tr>
-            </tbody>
-        </table>
-
-        <h2 style="color: #c0392b;">重型武器 (Heavy) - 消耗性資產</h2>
-        <table>
-            <tbody>
-                <tr><td width="100"><span class="tier-label t-heavy">HEAVY</span></td><td>機槍 / 重型突擊霰彈槍 / 爆破步槍</td><td>突圍與高壓時刻的保命彈幕</td></tr>
-                <tr><td><span class="tier-label t-heavy">HEAVY</span></td><td>MGL / RPG / 多管火箭發射器</td><td>瞬間摧毀殭屍金字塔的唯一解</td></tr>
-                <tr><td><span class="tier-label t-heavy">HEAVY</span></td><td>鏈鋸 / 火焰噴射器</td><td>近戰守點與特殊路徑封鎖</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div id="classes" class="weapon-section">
-        <div class="class-grid">
-            <div class="class-card"><h3>槍手 Gunslinger</h3><p>自動武器專家，爆頭能回彈藥，追求純粹的射擊精準度。</p></div>
-            <div class="class-card"><h3>叛逆者 Hellraiser</h3><p>爆破大師，強化 C4 與榴彈傷害，大範圍清理的代名詞。</p></div>
-            <div class="class-card"><h3>醫生 Medic</h3><p>核心生存位，能遠程打針提供護盾與隱身，維持團隊血線。</p></div>
-            <div class="class-card"><h3>修補匠 Fixer</h3><p>戰術支援，提供爆炸彈藥箱或遮蔽煙霧，是高難度生存的關鍵。</p></div>
-            <div class="class-card"><h3>劈砍者 Slasher</h3><p>近戰控制，使用電擊槍定身特殊殭屍，近戰揮砍體力上限極高。</p></div>
-            <div class="class-card"><h3>殲滅者 Exterminator</h3><p>防禦與灼燒專家，燃燒彈清理金字塔效率極高，殺敵後可隱身。</p></div>
-            <div class="class-card"><h3>無人機大師 Dronemaster</h3><p>科技防禦，派遣無人機進行自動電擊或消音防護。</p></div>
-            <div class="class-card"><h3>前鋒 Vanguard</h3><p>前線坦克，配備護盾可正面格擋傷害並衝鋒突破重圍。</p></div>
+<div id="infoModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div>
+                <div id="m-cn" class="modal-title-cn">載入中...</div>
+                <div id="m-en" class="modal-title-en">LOADING...</div>
+            </div>
+            <button class="modal-close-btn" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <div class="info-section">
+                <span class="info-label">TACTICAL ANALYSIS // 戰術分析</span>
+                <div id="m-desc" class="info-text">...</div>
+            </div>
+            <div class="info-section">
+                <span id="m-label" class="info-label">RECOMMENDED BUILDS // 專精推薦</span>
+                <ul id="m-list" class="build-list"></ul>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="container">
+    <a href="index.html" class="home-btn">← 返回首頁 <span>RETURN BASE</span></a>
+
+    <header>
+        <h1>戰術軍械庫 <small>WWZ ARMORY</small></h1>
+        <div class="subtitle">戰略資料庫系統 <span>// SYSTEM ONLINE</span></div>
+    </header>
+
+    <div class="nav-box">
+        <button class="tab-btn active" onclick="switchTab('weapons')">武器資料庫 <span>WEAPON DATA</span></button>
+        <button class="tab-btn" onclick="switchTab('classes')">職業情報 <span>CLASS INTEL</span></button>
+    </div>
+
+    <div id="weapons" class="section-content active">
+        <div class="t1-style">
+            <div class="tier-bar"><h2>等級一 <span>TIER 1</span></h2><div class="tier-desc">基礎配發 <span>// Basic</span></div></div>
+            <div class="grid-box">
+                <div class="card" onclick="openCard('scout_rifle')"><span class="card-name-cn">偵察步槍</span><span class="card-name-en">Scout Rifle</span></div>
+                <div class="card" onclick="openCard('compact_smg')"><span class="card-name-cn">緊湊型衝鋒槍</span><span class="card-name-en">Compact SMG</span></div>
+                <div class="card" onclick="openCard('shotgun')"><span class="card-name-cn">霰彈槍</span><span class="card-name-en">Shotgun</span></div>
+                <div class="card" onclick="openCard('pistol')"><span class="card-name-cn">手槍</span><span class="card-name-en">Pistol (1911)</span></div>
+                <div class="card" onclick="openCard('machine_pistol')"><span class="card-name-cn">自動手槍</span><span class="card-name-en">Machine Pistol</span></div>
+            </div>
+        </div>
+
+        <div class="t2-style">
+            <div class="tier-bar"><h2>等級二 <span>TIER 2</span></h2><div class="tier-desc">中堅戰力 <span>// Standard</span></div></div>
+            <div class="grid-box">
+                <div class="card" onclick="openCard('assault_rifle')"><span class="card-name-cn">突擊步槍</span><span class="card-name-en">Assault Rifle</span></div>
+                <div class="card" onclick="openCard('sporting_carbine')"><span class="card-name-cn">運動卡賓槍</span><span class="card-name-en">Sporting Carbine</span></div>
+                <div class="card" onclick="openCard('classic_battle_rifle')"><span class="card-name-cn">經典戰鬥步槍</span><span class="card-name-en">Classic Battle Rifle</span></div>
+                <div class="card" onclick="openCard('classic_bullpup')"><span class="card-name-cn">經典小鬥牛步槍</span><span class="card-name-en">Classic Bullpup</span></div>
+                <div class="card" onclick="openCard('light_automatic_weapon')"><span class="card-name-cn">輕型自動武器</span><span class="card-name-en">Light Automatic Weapon</span></div>
+                <div class="card" onclick="openCard('smg')"><span class="card-name-cn">衝鋒槍</span><span class="card-name-en">SMG (TMP5)</span></div>
+                <div class="card" onclick="openCard('defense_smg')"><span class="card-name-cn">防禦衝鋒槍</span><span class="card-name-en">Defense SMG</span></div>
+                <div class="card" onclick="openCard('combat_shotgun')"><span class="card-name-cn">戰鬥霰彈槍</span><span class="card-name-en">Combat Shotgun</span></div>
+                <div class="card" onclick="openCard('compact_shotgun')"><span class="card-name-cn">緊湊型霰彈槍</span><span class="card-name-en">Compact Shotgun</span></div>
+                <div class="card" onclick="openCard('sniper')"><span class="card-name-cn">狙擊步槍</span><span class="card-name-en">Sniper Rifle</span></div>
+                <div class="card" onclick="openCard('pdw')"><span class="card-name-cn">個人防衛武器</span><span class="card-name-en">PDW</span></div>
+                <div class="card" onclick="openCard('double_barrel')"><span class="card-name-cn">雙管霰彈槍</span><span class="card-name-en">Double-Barreled</span></div>
+                <div class="card" onclick="openCard('revolver')"><span class="card-name-cn">左輪手槍</span><span class="card-name-en">Revolver</span></div>
+            </div>
+        </div>
+
+        <div class="t3-style">
+            <div class="tier-bar"><h2>等級三 <span>TIER 3</span></h2><div class="tier-desc">頂級火力 <span>// Elite</span></div></div>
+            <div class="grid-box">
+                <div class="card" onclick="openCard('assault_carbine')"><span class="card-name-cn">突擊卡賓槍</span><span class="card-name-en">Assault Carbine</span></div>
+                <div class="card" onclick="openCard('battle_rifle')"><span class="card-name-cn">戰鬥步槍</span><span class="card-name-en">Battle Rifle (SCAR)</span></div>
+                <div class="card" onclick="openCard('bullpup')"><span class="card-name-cn">無托式步槍</span><span class="card-name-en">Bullpup Rifle</span></div>
+                <div class="card" onclick="openCard('acr')"><span class="card-name-cn">先進戰鬥武器</span><span class="card-name-en">ACR</span></div>
+                <div class="card" onclick="openCard('universal_bullpup')"><span class="card-name-cn">通用無托式步槍</span><span class="card-name-en">Universal Bullpup</span></div>
+                <div class="card" onclick="openCard('advanced_smg')"><span class="card-name-cn">先進衝鋒槍</span><span class="card-name-en">Advanced SMG</span></div>
+                <div class="card" onclick="openCard('special_smg')"><span class="card-name-cn">特殊衝鋒槍</span><span class="card-name-en">Special SMG</span></div>
+                <div class="card" onclick="openCard('assault_shotgun')"><span class="card-name-cn">突擊霰彈槍</span><span class="card-name-en">Assault Shotgun (Taiga)</span></div>
+                <div class="card" onclick="openCard('multi_barrel')"><span class="card-name-cn">多槍管霰彈槍</span><span class="card-name-en">Multi-Barrel Shotgun</span></div>
+                <div class="card" onclick="openCard('crossbow')"><span class="card-name-cn">十字弩</span><span class="card-name-en">Crossbow (Explosive)</span></div>
+                <div class="card" onclick="openCard('gl')"><span class="card-name-cn">榴彈發射器</span><span class="card-name-en">Grenade Launcher</span></div>
+                <div class="card" onclick="openCard('repeating_rifle')"><span class="card-name-cn">連發步槍</span><span class="card-name-en">Repeating Rifle</span></div>
+                <div class="card" onclick="openCard('heavy_pistol')"><span class="card-name-cn">重型手槍</span><span class="card-name-en">Heavy Pistol (DE50)</span></div>
+            </div>
+        </div>
+
+        <div class="heavy-style">
+            <div class="tier-bar"><h2>重型武器 <span>HEAVY</span></h2><div class="tier-desc" style="color:var(--neon-red)">毀滅性武裝 <span>// Demolition</span></div></div>
+            <div class="grid-box">
+                <div class="card" onclick="openCard('rpg')"><span class="card-name-cn">RPG 發射器</span><span class="card-name-en">RPG Launcher</span></div>
+                <div class="card" onclick="openCard('mgl')"><span class="card-name-cn">MGL 榴彈槍</span><span class="card-name-en">MGL Launcher</span></div>
+                <div class="card" onclick="openCard('mrl')"><span class="card-name-cn">多管火箭發射器</span><span class="card-name-en">MRL (Commando)</span></div>
+                <div class="card" onclick="openCard('payload')"><span class="card-name-cn">爆破步槍</span><span class="card-name-en">Payload Rifle</span></div>
+                <div class="card" onclick="openCard('heavy_shotgun')"><span class="card-name-cn">重型突擊霰彈槍</span><span class="card-name-en">Heavy Assault Shotgun</span></div>
+                <div class="card" onclick="openCard('machine_gun')"><span class="card-name-cn">機槍</span><span class="card-name-en">Machine Gun</span></div>
+                <div class="card" onclick="openCard('flamethrower')"><span class="card-name-cn">火焰噴射器</span><span class="card-name-en">Flamethrower</span></div>
+                <div class="card" onclick="openCard('chainsaw')"><span class="card-name-cn">鏈鋸</span><span class="card-name-en">Chainsaw</span></div>
+            </div>
+        </div>
+
+        <div class="melee-style">
+            <div class="tier-bar"><h2>近戰武器 <span>MELEE</span></h2><div class="tier-desc">近身作戰 <span>// CQC</span></div></div>
+            <div class="grid-box">
+                <div class="card" onclick="openCard('light_melee')"><span class="card-name-cn">輕型近戰武器</span><span class="card-name-en">Dual Knives</span></div>
+                <div class="card" onclick="openCard('medium_melee')"><span class="card-name-cn">中型近戰武器</span><span class="card-name-en">Machete / Tomahawk</span></div>
+                <div class="card" onclick="openCard('heavy_melee')"><span class="card-name-cn">重型近戰武器</span><span class="card-name-en">Fire Axe / Sledgehammer</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="classes" class="section-content">
+        <div class="grid-box">
+            <div class="class-card" onclick="openCard('gunslinger')"><h3>槍手<span>Gunslinger</span></h3><p>專注於槍械精準度與射速，移動中的穩定砲台，負責清理特殊殭屍。</p></div>
+            <div class="class-card" onclick="openCard('hellraiser')"><h3>叛逆者<span>Hellraiser</span></h3><p>C4 與榴彈大師，對付密集屍群的專家，爆炸是唯一的語言。</p></div>
+            <div class="class-card" onclick="openCard('medic')"><h3>醫生<span>Medic</span></h3><p>生存核心，興奮劑手槍可遠程治療或提供暫時護盾，隊伍的保險絲。</p></div>
+            <div class="class-card" onclick="openCard('fixer')"><h3>修補匠<span>Fixer</span></h3><p>戰術支援，提供極具破壞力的爆破彈藥，或使用遮蔽煙霧逆轉戰局。</p></div>
+            <div class="class-card" onclick="openCard('slasher')"><h3>劈砍者<span>Slasher</span></h3><p>近戰特化，電擊槍可定身蠻牛，近戰揮砍無視疲勞，前線絞肉機。</p></div>
+            <div class="class-card" onclick="openCard('exterminator')"><h3>殲滅者<span>Exterminator</span></h3><p>屍潮防禦者，燃燒瓶能封鎖大片區域，且對著火目標有額外傷害。</p></div>
+            <div class="class-card" onclick="openCard('dronemaster')"><h3>無人機大師<span>Dronemaster</span></h3><p>科技護衛，無人機可自動電擊靠近的殭屍，適合單兵或保護隊友。</p></div>
+            <div class="class-card" onclick="openCard('vanguard')"><h3>前鋒<span>Vanguard</span></h3><p>絕對防禦，使用盾牌格擋所有正面傷害並衝鋒擊退屍群，救援最強。</p></div>
+        </div>
+    </div>
+</div>
+
+<script src="database.js"></script>
+
 <script>
-    function showTab(tabId) {
-        document.querySelectorAll('.weapon-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    // 切換分頁
+    function switchTab(tabId) {
+        document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         event.currentTarget.classList.add('active');
+    }
+
+    // 開啟資訊卡 (從 database.js 讀取)
+    function openCard(id) {
+        const modal = document.getElementById('infoModal');
+        const data = database[id] || database['default'];
+
+        // 填入標題與描述
+        document.getElementById('m-cn').textContent = data.cn;
+        document.getElementById('m-en').textContent = data.en;
+        document.getElementById('m-desc').textContent = data.desc;
+
+        // 判斷標籤 (職業/武器)
+        if (data.type === 'class') {
+            document.getElementById('m-label').textContent = "RECOMMENDED BUILDS // 職業流派與技能";
+        } else {
+            document.getElementById('m-label').textContent = "MASTERY PERKS // 武器專精推薦";
+        }
+
+        // 建立列表
+        const list = document.getElementById('m-list');
+        list.innerHTML = ""; // 清空舊資料
+        data.builds.forEach(build => {
+            const li = document.createElement('li');
+            li.className = 'build-item';
+            li.innerHTML = `<span class="build-name">${build.name}</span><span class="build-desc">${build.desc}</span>`;
+            list.appendChild(li);
+        });
+
+        modal.classList.add('open');
+    }
+
+    // 關閉視窗
+    function closeModal(e) {
+        const modal = document.getElementById('infoModal');
+        // 點擊背景 或 關閉按鈕時
+        if (!e || e.target === modal || e.target.classList.contains('modal-close-btn')) {
+            modal.classList.remove('open');
+        }
     }
 </script>
 
