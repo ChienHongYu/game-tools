@@ -19,16 +19,15 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             font-family: 'Noto Sans TC', sans-serif;
-            height: 100vh;
+            min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow: hidden;
             /* 背景：深色抽象流體 */
             background-image: radial-gradient(circle at top right, #2a2a2a 0%, #121212 60%);
         }
 
         /* ================= 標題區 ================= */
         .header {
-            text-align: center; margin-bottom: 60px;
+            text-align: center; margin: 40px 0;
             animation: fadeIn 1s ease-out;
         }
         
@@ -48,15 +47,17 @@
 
         /* ================= 卡片容器 ================= */
         .card-container {
-            display: flex; gap: 40px;
-            perspective: 1000px; /* 3D 視角 */
+            display: flex; gap: 30px;
+            perspective: 1000px;
             padding: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         /* ================= 遊戲卡片設計 ================= */
         .game-card {
             position: relative;
-            width: 300px; height: 450px;
+            width: 280px; height: 420px;
             border-radius: 20px;
             text-decoration: none;
             overflow: hidden;
@@ -66,77 +67,63 @@
             display: flex; flex-direction: column; justify-content: flex-end;
         }
 
-        /* 背景圖層 (用漸層模擬封面) */
         .card-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             transition: transform 0.5s;
             z-index: 0;
         }
 
-        /* RF Online 封面色系 */
-        .bg-rf {
-            background: linear-gradient(160deg, #3e2b1f 0%, #d4a76a 120%);
-        }
-        
-        /* Subnautica 封面色系 */
-        .bg-sub {
-            background: linear-gradient(160deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-        }
+        /* 色系定義 */
+        .bg-rf { background: linear-gradient(160deg, #3e2b1f 0%, #d4a76a 120%); }
+        .bg-sub { background: linear-gradient(160deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+        .bg-wwz { background: linear-gradient(160deg, #4a0404 0%, #1a1a1a 100%); }
 
-        /* 內容層 */
         .card-content {
             position: relative; z-index: 1;
-            padding: 30px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            padding: 25px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
             transform: translateY(20px);
             transition: 0.4s;
         }
 
         .game-tag {
-            font-size: 0.8rem; font-weight: bold;
-            padding: 5px 10px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: bold;
+            padding: 5px 12px; border-radius: 50px;
             display: inline-block; margin-bottom: 10px;
             text-transform: uppercase; letter-spacing: 1px;
         }
         
         .tag-rf { background: rgba(212, 167, 106, 0.2); color: #d4a76a; }
         .tag-sub { background: rgba(0, 188, 212, 0.2); color: #00bcd4; }
+        .tag-wwz { background: rgba(255, 68, 68, 0.2); color: #ff4444; }
 
         .game-title {
-            font-size: 2rem; font-family: 'Oswald', sans-serif;
+            font-size: 1.8rem; font-family: 'Oswald', sans-serif;
             margin: 0 0 10px 0; color: #fff; line-height: 1.1;
         }
 
         .game-info {
-            font-size: 0.9rem; color: #ccc;
+            font-size: 0.85rem; color: #ccc;
             opacity: 0; transform: translateY(20px);
-            transition: 0.4s;
+            transition: 0.4s; line-height: 1.4;
         }
 
         /* ================= 互動效果 ================= */
         .game-card:hover {
             transform: translateY(-15px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 40px rgba(255, 0, 0, 0.15); /* 增加微弱光暈 */
         }
 
-        .game-card:hover .card-bg {
-            transform: scale(1.1); /* 背景放大 */
-        }
-
-        .game-card:hover .card-content {
-            transform: translateY(0);
-        }
-
-        .game-card:hover .game-info {
-            opacity: 1; transform: translateY(0);
-        }
+        .game-card:hover .card-bg { transform: scale(1.1); }
+        .game-card:hover .card-content { transform: translateY(0); }
+        .game-card:hover .game-info { opacity: 1; transform: translateY(0); }
 
         /* ================= 手機版適配 ================= */
         @media (max-width: 768px) {
-            body { height: auto; padding: 50px 20px; }
-            .card-container { flex-direction: column; gap: 30px; }
-            .game-card { width: 100%; height: 250px; }
-            .game-info { opacity: 1; transform: translateY(0); } /* 手機直接顯示內容 */
+            body { height: auto; padding-bottom: 50px; }
+            .card-container { flex-direction: column; align-items: center; }
+            .game-card { width: 90vw; height: 250px; }
+            .game-info { opacity: 1; transform: translateY(0); }
             .card-content { transform: translateY(0); }
         }
 
@@ -153,32 +140,31 @@
     <div class="card-container">
         
         <a href="rf.html" class="game-card">
-            <div class="card-bg bg-rf"></div> <div class="card-content">
+            <div class="card-bg bg-rf"></div>
+            <div class="card-content">
                 <span class="game-tag tag-rf">MMORPG</span>
                 <h2 class="game-title">RF Online<br>Next</h2>
-                <div class="game-info">
-                    包含：物質變換計算、鑽石節點 CP 分析
-                </div>
+                <div class="game-info">包含：物質變換計算、鑽石節點 CP 分析</div>
+            </div>
+        </a>
+
+        <a href="wwz.html" class="game-card">
+            <div class="card-bg bg-wwz"></div>
+            <div class="card-content">
+                <span class="game-tag tag-wwz">Action / Co-op</span>
+                <h2 class="game-title">World War Z<br>末日之戰</h2>
+                <div class="game-info">包含：8大職業技能、全武器等級 Tier 1-3 數據整理</div>
             </div>
         </a>
 
         <a href="subnautica.html" class="game-card">
-            <div class="card-bg bg-sub"></div> <div class="card-content">
+            <div class="card-bg bg-sub"></div>
+            <div class="card-content">
                 <span class="game-tag tag-sub">SURVIVAL</span>
                 <h2 class="game-title">Subnautica<br>深海迷航</h2>
-                <div class="game-info">
-                    包含：全景戰略地圖、資源分布、生物群落
-                </div>
+                <div class="game-info">包含：全景戰略地圖、資源分布、生物群落</div>
             </div>
         </a>
-
-        <div class="game-card" style="opacity: 0.5; cursor: default;">
-            <div class="card-bg" style="background: #222;"></div>
-            <div class="card-content">
-                <span class="game-tag" style="background:#444; color:#888;">LOCKED</span>
-                <h2 class="game-title" style="color:#666;">Coming<br>Soon</h2>
-            </div>
-        </div>
 
     </div>
 
